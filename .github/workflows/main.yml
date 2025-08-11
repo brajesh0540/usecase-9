@@ -21,7 +21,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: uc-8
+        working-directory: usecase-9
         
     steps:
       - name: Checkout code
