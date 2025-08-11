@@ -18,10 +18,6 @@ jobs:
       contents: write
       actions: write
       deployments: write
-
-    defaults:
-      run:
-        working-directory: usecase-9
         
     steps:
       - name: Checkout code
