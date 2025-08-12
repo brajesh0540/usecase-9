@@ -43,6 +43,14 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
+      - name: Terraform import
+        run: |
+          terraform import aws_vpc.eks-vpc vpc-0031c2d4baf4fae26
+          terraform import aws_iam_role.eks-cluster-role eks-cluster-example
+          terraform import aws_iam_role.fargate-pf-role eks-fargate-profile-role
+          terraform import aws_iam_role.eks-ng-role eks-node-group-role
+          terraform import aws_eks_cluster.eks-cluster eks-cluster
+
       - name: Terraform Plan
         run: terraform plan
 
