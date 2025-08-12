@@ -1,7 +1,7 @@
 resource "aws_eks_fargate_profile" "eks-fg-pf" {
   cluster_name           = aws_eks_cluster.eks-cluster.name
   fargate_profile_name   = "eks-profile1"
-  pod_execution_role_arn = aws_iam_role.example.arn
+  pod_execution_role_arn = aws_iam_role.fargate-pf-role.arn
   selector {
     namespace = "kube-system"
   }
