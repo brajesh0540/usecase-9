@@ -9,6 +9,10 @@ resource "aws_eks_fargate_profile" "eks-fg-pf" {
   selector {
     namespace = "default"
   }
+  subnet_ids             = [
+    aws_subnet.private-subnet-1.id, 
+    aws_subnet.private-subnet-2.id
+    ]
 }
 
 resource "aws_iam_role" "fargate-pf-role" {
