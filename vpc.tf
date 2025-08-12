@@ -74,7 +74,7 @@ resource "aws_nat_gateway" "eks-ngw" {
   depends_on = [aws_internet_gateway.eks-gw]
 }
 
-resource "aws_eip" "eks-eip" {
+resource "aws_eip" "eks-ngw-eip" {
   domain = "vpc"
   tags = var.tags
   depends_on                = [aws_internet_gateway.eks-gw]
