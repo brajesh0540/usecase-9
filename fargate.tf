@@ -9,8 +9,8 @@ resource "aws_eks_fargate_profile" "eks-fg-pf" {
     namespace = "default"
   }
   subnet_ids             = [
-    aws_subnet.private-subnet-1.id, 
-    aws_subnet.private-subnet-2.id
+    aws_subnet.private_subnet-1.id, 
+    aws_subnet.private_subnet-2.id
     ]
 }
 
