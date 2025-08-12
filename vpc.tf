@@ -1,11 +1,12 @@
-data "aws_availability_zones" "available" {
-state = "available"
+resource "aws_vpc" "eks-vpc" {
+  cidr_block = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  tags = var.tags
+
 }
 
-resource "aws_vpc" "demo-eks-cluster-vpc" {
-cidr_block       = var.cidr_block
-enable_dns_hostnames = true
-tags = var.tags
+data "aws_availability_zones" "available" {
+  state = "available"
 }
 
 locals {
@@ -14,90 +15,95 @@ additional_tags = {
 }
 }
 
-resource "aws_subnet" "public-subnet-1" {
-vpc_id     = aws_vpc.demo-eks-cluster-vpc.id
-cidr_block = cidrsubnet(var.cidr_block, 8, 10) # 10.10.10.0/24
-availability_zone = data.aws_availability_zones.available.names[0]
-tags = var.tags
-}
+resource "aws_internet_gateway" "eks-gw" {
+  vpc_id = aws_vpc.eks-vpc.id
 
-resource "aws_subnet" "public-subnet-2" {
-vpc_id     = aws_vpc.demo-eks-cluster-vpc.id
-cidr_block = cidrsubnet(var.cidr_block, 8, 20) # 10.10.20.0/24
-availability_zone = data.aws_availability_zones.available.names[1]
-tags = var.tags
-}
-
-resource "aws_subnet" "private-subnet-1" {
-vpc_id     = aws_vpc.demo-eks-cluster-vpc.id
-cidr_block = cidrsubnet(var.cidr_block, 8, 110) # 10.10.110.0/24
-availability_zone = data.aws_availability_zones.available.names[0]
-tags = merge( var.tags, local.additional_tags)
-}
-
-resource "aws_subnet" "private-subnet-2" {
-vpc_id     = aws_vpc.demo-eks-cluster-vpc.id
-cidr_block = cidrsubnet(var.cidr_block, 8, 120)
-availability_zone = data.aws_availability_zones.available.names[1]
-tags = merge( var.tags, local.additional_tags)
-}
-
-resource "aws_internet_gateway" "eks-igw" {
-vpc_id = aws_vpc.demo-eks-cluster-vpc.id
-tags = var.tags
-}
-
-resource "aws_eip" "eks-ngw-eip" {
-domain = "vpc"
-tags = var.tags
-depends_on = [aws_internet_gateway.eks-igw]
-}
-
-resource "aws_nat_gateway" "eks-ngw" {
-allocation_id = aws_eip.eks-ngw-eip.id
-subnet_id     = aws_subnet.public-subnet-1.id
-
-depends_on = [aws_internet_gateway.eks-igw]
-tags = var.tags
+  tags = var.tags
 }
 
 resource "aws_route_table" "public-rt" {
-vpc_id = aws_vpc.demo-eks-cluster-vpc.id
+  vpc_id = aws_vpc.eks-vpc.id
 
-route {
+  route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.eks-igw.id
-}
-tags = var.tags
+    gateway_id = aws_internet_gateway.eks-gw.id
+  }
+
+  tags = var.tags
 }
 
-resource "aws_route_table"  "private-rt" {
-vpc_id = aws_vpc.demo-eks-cluster-vpc.id
+resource "aws_route_table" "private-rt" {
+  vpc_id = aws_vpc.eks-vpc.id
 
-route {
+  route {
     cidr_block = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.eks-ngw.id
-}
-tags = var.tags
+  }
+
+  tags = var.tags
 }
 
-# Associate Route Tables with Subnets
-resource "aws_route_table_association" "public-rt-assoc-1" {
-subnet_id      = aws_subnet.public-subnet-1.id
-route_table_id = aws_route_table.public-rt.id
+resource "aws_route_table_association" "public-rta1" {
+  subnet_id      = aws_subnet.public_subnet-1.id
+  route_table_id = aws_route_table.public-rt.id
 }
 
-resource "aws_route_table_association" "public-rt-assoc-2" {
-subnet_id      = aws_subnet.public-subnet-2.id
-route_table_id = aws_route_table.public-rt.id
+resource "aws_route_table_association" "public-rta2" {
+  subnet_id      = aws_subnet.public_subnet-2.id
+  route_table_id = aws_route_table.public-rt.id
 }
 
-resource "aws_route_table_association" "private-rt-assoc-1" {
-subnet_id      = aws_subnet.private-subnet-1.id
-route_table_id = aws_route_table.private-rt.id
+resource "aws_route_table_association" "private-rta1" {
+  subnet_id      = aws_subnet.private_subnet-1.id
+  route_table_id = aws_route_table.private-rt.id
 }
 
-resource "aws_route_table_association" "private-rt-assoc-2" {
-subnet_id      = aws_subnet.private-subnet-2.id
-route_table_id = aws_route_table.private-rt.id
+resource "aws_route_table_association" "private-rta2" {
+  subnet_id      = aws_subnet.private_subnet-2.id
+  route_table_id = aws_route_table.private-rt.id
+}
+
+resource "aws_nat_gateway" "eks-ngw" {
+  allocation_id = aws_eip.eks-eip.id
+  subnet_id     = aws_subnet.public-subnet-1.id
+
+  tags = var.tags
+
+  # To ensure proper ordering, it is recommended to add an explicit dependency
+  # on the Internet Gateway for the VPC.
+  depends_on = [aws_internet_gateway.eks-gw]
+}
+
+resource "aws_eip" "eks-eip" {
+  domain = "vpc"
+  tags = var.tags
+  depends_on                = [aws_internet_gateway.eks-gw]
+}
+
+resource "aws_subnet" "public_subnet-1" {
+  vpc_id     = aws_vpc.eks-vpc.id
+  cidr_block = cidrsubnet(var.cidr_block, 8, 10)
+  tags = var.tags
+  availability_zone = data.aws_availability_zones.available.names[0]
+}
+
+resource "aws_subnet" "public_subnet-2" {
+  vpc_id     = aws_vpc.eks-vpc.id
+  cidr_block = cidrsubnet(var.cidr_block, 8, 20)
+  tags = var.tags
+  availability_zone = data.aws_availability_zones.available.names[1]
+}
+
+resource "aws_subnet" "private_subnet-1" {
+  vpc_id     = aws_vpc.eks-vpc.id
+  cidr_block = cidrsubnet(var.cidr_block, 8, 110)
+  tags = var.tags
+  availability_zone = data.aws_availability_zones.available.names[0]
+}
+
+resource "aws_subnet" "private_subnet-2" {
+  vpc_id     = aws_vpc.eks-vpc.id
+  cidr_block = cidrsubnet(var.cidr_block, 8, 20)
+  tags = var.tags
+  availability_zone = data.aws_availability_zones.available.names[1]
 }
