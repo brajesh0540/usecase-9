@@ -14,7 +14,7 @@ variable "tags" {
 type = map(string)
 default = {
     terraform  = "true"
-    kubernetes = "demo-eks-cluster"
+    kubernetes = "eks-cluster"
 }
 description = "Tags to apply to all resources"
 }
@@ -27,7 +27,7 @@ description = "EKS version"
 
 variable "cluster_name" {
 type = string
-default = "demo-eks-cluster"
+default = "eks-cluster"
 description = "value of the EKS cluster name"
   
 }
