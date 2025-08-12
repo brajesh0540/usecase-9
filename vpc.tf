@@ -97,13 +97,13 @@ resource "aws_subnet" "public_subnet-2" {
 resource "aws_subnet" "private_subnet-1" {
   vpc_id     = aws_vpc.eks-vpc.id
   cidr_block = cidrsubnet(var.cidr_block, 8, 110)
-  tags = var.tags
   availability_zone = data.aws_availability_zones.available.names[0]
+  tags = merge( var.tags, local.additional_tags)
 }
 
 resource "aws_subnet" "private_subnet-2" {
   vpc_id     = aws_vpc.eks-vpc.id
-  cidr_block = cidrsubnet(var.cidr_block, 8, 20)
-  tags = var.tags
+  cidr_block = cidrsubnet(var.cidr_block, 8, 120)
   availability_zone = data.aws_availability_zones.available.names[1]
+  tags = merge( var.tags, local.additional_tags)
 }
