@@ -1,5 +1,18 @@
-resource "aws_iam_role" "demo-eks-fargate-profile-role" {
-  name = "demo-eks-fargate-profile-role"
+resource "aws_eks_fargate_profile" "eks-fg-pf" {
+  cluster_name           = aws_eks_cluster.eks-cluster.name
+  fargate_profile_name   = "eks-profile1"
+  pod_execution_role_arn = aws_iam_role.example.arn
+  subnet_ids             = aws_subnet.example[*].id
+  selector {
+    namespace = "kube-system"
+  }
+  selector {
+    namespace = "default"
+  }
+}
+
+resource "aws_iam_role" "fargate-pf-role" {
+  name = "eks-fargate-profile-role"
 
   assume_role_policy = jsonencode({
     Statement = [{
@@ -13,28 +26,7 @@ resource "aws_iam_role" "demo-eks-fargate-profile-role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "fargate-execution-policy" {
+resource "aws_iam_role_policy_attachment" "example-AmazonEKSFargatePodExecutionRolePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
-  role       = aws_iam_role.demo-eks-fargate-profile-role.name
-}
-
-resource "aws_eks_fargate_profile" "demo-eks-fg-prof" { 
-cluster_name           = aws_eks_cluster.demo-eks-cluster.name
-fargate_profile_name   = "demo-eks-fargate-profile-1"
-pod_execution_role_arn = aws_iam_role.demo-eks-fargate-profile-role.arn
-selector {
-    namespace = "kube-system"
-    #can further filter by labels
-}
-selector {
-    namespace = "default"
-}
-#these subnets must be labeled with kubernetes.io/cluster/{cluster-name} = owned
-subnet_ids             = [
-    aws_subnet.private-subnet-1.id, 
-    aws_subnet.private-subnet-2.id
-    ]
-
-depends_on = [ aws_iam_role_policy_attachment.fargate-execution-policy ]
-
+  role       = aws_iam_role.fargate-pf-role.name
 }
