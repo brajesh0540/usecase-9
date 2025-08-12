@@ -82,28 +82,28 @@ resource "aws_eip" "eks-ngw-eip" {
 
 resource "aws_subnet" "public_subnet-1" {
   vpc_id     = aws_vpc.eks-vpc.id
-  cidr_block = cidrsubnet(var.cidr_block, 8, 10)
+  cidr_block = cidrsubnet(var.cidr_block, 8, 1)
   tags = var.tags
   availability_zone = data.aws_availability_zones.available.names[0]
 }
 
 resource "aws_subnet" "public_subnet-2" {
   vpc_id     = aws_vpc.eks-vpc.id
-  cidr_block = cidrsubnet(var.cidr_block, 8, 20)
+  cidr_block = cidrsubnet(var.cidr_block, 8, 2)
   tags = var.tags
   availability_zone = data.aws_availability_zones.available.names[1]
 }
 
 resource "aws_subnet" "private_subnet-1" {
   vpc_id     = aws_vpc.eks-vpc.id
-  cidr_block = cidrsubnet(var.cidr_block, 8, 110)
+  cidr_block = cidrsubnet(var.cidr_block, 8, 3)
   availability_zone = data.aws_availability_zones.available.names[0]
   tags = merge( var.tags, local.additional_tags)
 }
 
 resource "aws_subnet" "private_subnet-2" {
   vpc_id     = aws_vpc.eks-vpc.id
-  cidr_block = cidrsubnet(var.cidr_block, 8, 120)
+  cidr_block = cidrsubnet(var.cidr_block, 8, 4)
   availability_zone = data.aws_availability_zones.available.names[1]
   tags = merge( var.tags, local.additional_tags)
 }
