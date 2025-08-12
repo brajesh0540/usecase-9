@@ -6,6 +6,7 @@ resource "aws_eks_node_group" "eks-node-grp" {
     aws_subnet.private_subnet-1.id, 
     aws_subnet.private_subnet-2.id
     ]
+  instance_types = ["t3.micro"] # Free-tier eligible
 
   scaling_config {
     desired_size = 1
