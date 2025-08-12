@@ -64,7 +64,7 @@ resource "aws_route_table_association" "private-rta2" {
 }
 
 resource "aws_nat_gateway" "eks-ngw" {
-  allocation_id = aws_eip.eks-eip.id
+  allocation_id = aws_eip.eks-ngw-eip.id
   subnet_id     = aws_subnet.public_subnet-1.id
 
   tags = var.tags
