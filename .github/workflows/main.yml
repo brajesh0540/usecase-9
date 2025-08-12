@@ -49,7 +49,6 @@ jobs:
           terraform import aws_iam_role.eks-cluster-role eks-cluster-example
           terraform import aws_iam_role.fargate-pf-role eks-fargate-profile-role
           terraform import aws_iam_role.eks-ng-role eks-node-group-role
-          terraform import aws_eks_cluster.eks-cluster eks-cluster
 
       - name: Terraform Plan
         run: terraform plan
