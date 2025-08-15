@@ -44,11 +44,11 @@ jobs:
         run: terraform validate
 
 
-      - name: Terraform state list
-        run: terraform state list
+      #- name: Terraform state list
+       # run: terraform state list
 
-      #- name: Terraform Plan
-      #  run: terraform plan
+      - name: Terraform Plan
+        run: terraform plan
 
-      #- name: Terraform apply
-      #  run: terraform destroy --auto-approve
+      - name: Terraform apply
+        run: terraform destroy --auto-approve
