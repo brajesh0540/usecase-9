@@ -10,3 +10,12 @@ required_providers {
 provider "aws" {
 region = var.region
 }
+
+terraform {
+  backend "s3" {
+    bucket = "my-terraform-state-brajesh1"
+    key    = "eks/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
