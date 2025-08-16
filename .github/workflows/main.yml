@@ -44,11 +44,14 @@ jobs:
         run: terraform validate
 
 
-      #- name: Terraform state list
-       # run: terraform state list
+      - name: Terraform state list
+        run: terraform state list
+
+      - name: Terraform import
+        run: terraform import aws_s3_bucket.my-terraform-state-brajesh1
 
       - name: Terraform Plan
         run: terraform plan
 
       - name: Terraform apply
-        run: terraform destroy --auto-approve
+        run: terraform apply -target=aws_s3_bucket.my-terraform-state-brajesh1
