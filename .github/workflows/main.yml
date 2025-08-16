@@ -48,10 +48,12 @@ jobs:
         run: terraform state list
 
       - name: Terraform import
-        run: terraform import aws_s3_bucket.my-terraform-state-brajesh1
+        run: |
+          terraform import aws_s3_bucket.my_state_bucket my-terraform-state-brajesh1
+          terraform import aws_s3_bucket_versioning.versioning_bucket my-terraform-state-brajesh1
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -target=aws_s3_bucket.my_state_bucket -target=aws_s3_bucket_versioning.versioning_bucket
 
       - name: Terraform apply
-        run: terraform apply -target=aws_s3_bucket.my-terraform-state-brajesh1
+        run: terraform apply -target=aws_s3_bucket.my_state_bucket -target=aws_s3_bucket_versioning.versioning_bucket -auto-approve
