@@ -47,16 +47,12 @@ jobs:
       - name: Terraform state list
         run: terraform state list
 
-      - name: Terraform state remove
-        run: terraform state rm aws_s3_bucket.my_state_bucket
+      #- name: Terraform state remove
+      #  run: terraform state rm aws_s3_bucket.my_state_bucket
 
-      - name: Terraform import
-        run: |
-          terraform import aws_s3_bucket.my_state_bucket my-terraform-state-brajesh1
-          terraform import aws_s3_bucket_versioning.versioning_bucket my-terraform-state-brajesh1
 
       - name: Terraform Plan
-        run: terraform plan -target=aws_s3_bucket.my_state_bucket -target=aws_s3_bucket_versioning.versioning_bucket
+        run: terraform plan
 
       - name: Terraform apply
-        run: terraform apply -target=aws_s3_bucket.my_state_bucket -target=aws_s3_bucket_versioning.versioning_bucket -auto-approve
+        run: terraform destroy -auto-approve
