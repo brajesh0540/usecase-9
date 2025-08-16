@@ -47,6 +47,9 @@ jobs:
       - name: Terraform state list
         run: terraform state list
 
+      - name: Terraform state remove
+        run: terraform state rm aws_s3_bucket.my_state_bucket
+
       - name: Terraform import
         run: |
           terraform import aws_s3_bucket.my_state_bucket my-terraform-state-brajesh1
