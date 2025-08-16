@@ -44,8 +44,8 @@ jobs:
         run: terraform validate
 
 
-      - name: Terraform state list
-        run: terraform state list
+      #- name: Terraform state list
+      #  run: terraform state list
 
       #- name: Terraform state remove
       #  run: terraform state rm aws_s3_bucket.my_state_bucket
@@ -56,4 +56,4 @@ jobs:
 
       - name: Terraform apply
         run: terraform apply -auto-approve
-        
+
