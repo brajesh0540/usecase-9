@@ -57,3 +57,4 @@ jobs:
 
       - name: Terraform apply
         run: terraform apply -target=aws_s3_bucket.my_state_bucket -target=aws_s3_bucket_versioning.versioning_bucket -auto-approve
+
